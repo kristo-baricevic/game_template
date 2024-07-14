@@ -54,9 +54,20 @@ public:
     {
         wrefresh(board_win);
     }
+    
+    int getStartRow() const
+    {
+        return start_row;
+    }
+    
+    int getStartCol() const
+    {
+        return start_col;
+    }
 
 private:
     WINDOW *board_win;
+    int height, width, start_row, start_col;
 
     void construct(int height, int width)
     {
@@ -67,6 +78,10 @@ private:
 
         int yMax, xMax;
         getmaxyx(stdscr, yMax, xMax);
+        this->height = height;
+        this->width = width;
+        start_row = (yMax / 2) - (height / 2);
+        start_col = (xMax / 2) - (width / 2);
 
         std::cout << "Terminal size: " << yMax << "x" << xMax << std::endl;
         std::cout << "Board size: " << height << "x" << width << std::endl;
@@ -77,7 +92,8 @@ private:
         }
 
         // Center the board on the screen
-        board_win = newwin(height, width, (yMax / 2) - (height / 2), (xMax / 2) - (width / 2));
+        board_win = newwin(height, width, start_row, start_col);
+        keypad(board_win, TRUE);
         if (board_win == nullptr) {
             std::cerr << "Error creating new window" << std::endl;
         } else {

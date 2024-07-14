@@ -15,14 +15,14 @@ public:
         icon = ch;
     }
 
-    int getX() {
+    int getX() const {
         return x;
     }
-    int getY() {
+    int getY() const {
         return y;
     }
 
-    chtype getIcon() {  
+    chtype getIcon() const {  
         return icon; 
     }
 
