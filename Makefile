@@ -3,8 +3,8 @@ CXXFLAGS = -std=c++11 -Wall
 LDFLAGS = -lncurses
 
 # List of source files
-SRCS = main.cpp src/Board.cpp src/Dashboard.cpp src/Game.cpp src/Drawable.cpp
-
+SRCS = main.cpp src/Board.cpp src/Dashboard.cpp src/Game.cpp src/Drawable.cpp src/Character.cpp src/Empty.cpp
+ 
 # List of object files
 OBJS = $(SRCS:.cpp=.o)
 

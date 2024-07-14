@@ -3,7 +3,8 @@
 #include "src/Game.hpp"
 #include "src/Drawable.hpp"
 
-#define BOARD_DIM 20
+
+#define BOARD_DIM 28
 #define BOARD_ROWS BOARD_DIM
 #define BOARD_COLS BOARD_DIM * 2
 

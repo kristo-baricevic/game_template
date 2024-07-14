@@ -43,6 +43,11 @@ public:
         return wgetch(board_win);
     }
 
+    void getEmptyCoordinates(int& y, int& x) 
+    {
+        while ((mvwinch(board_win, y = rand() % height, x = rand() % width)) != ' ');
+    }
+
     void clear()
     {
         wclear(board_win);
@@ -83,8 +88,6 @@ private:
         start_row = (yMax / 2) - (height / 2);
         start_col = (xMax / 2) - (width / 2);
 
-        std::cout << "Terminal size: " << yMax << "x" << xMax << std::endl;
-        std::cout << "Board size: " << height << "x" << width << std::endl;
 
         if (height > yMax || width > xMax) {
             std::cerr << "Board dimensions are larger than terminal size" << std::endl;

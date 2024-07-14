@@ -3,6 +3,11 @@
 #include "Board.hpp"
 #include "Drawable.hpp"
 #include "Dashboard.hpp"
+#include "Empty.hpp"
+#include "Character.hpp"
+#include <time.h>
+#include <stdlib.h>
+
 
 class Game
 {
@@ -17,6 +22,12 @@ public:
         score = 0;
         dashboard.initialize(score);
         game_over = false;
+        srand(time(NULL));
+    }
+
+    ~Game()
+    {
+        delete character;
     }
 
     void processInput()
@@ -29,8 +40,16 @@ public:
 
     void updateState()
     {
+        int y, x;
+        board.getEmptyCoordinates(y, x);
         board.clear();
-        board.add(Drawable(3, 3, '&'));
+        if (character != NULL) 
+            board.add(Empty(character->getY(), character->getX()));
+ 
+        character = new Character(y, x);
+        board.add(*character);
+        board.add(Drawable(3, 4, '@'));
+
         score += 1;
         dashboard.updateScore(score);
     }
@@ -49,6 +68,7 @@ public:
 private:
     Board board;
     Dashboard dashboard;
+    Character *character;
     bool game_over;
     int score;
 };
