@@ -15,11 +15,15 @@ class Game
     Dashboard dashboard;
     Character *character;
     Snake snake;
+    bool game_over;
+    int score;
 
 public:
     Game(int height, int width)
+    : board(height, width),
+      dashboard(width, board.getStartRow() + height, board.getStartCol()),
+      character(nullptr), snake(), game_over(false), score(0)
     {
-        board = Board(height, width);
         initialize(height, width);
     }
 
@@ -30,30 +34,77 @@ public:
 
     void initialize(int height, int width) 
     {
-        character = nullptr;
-        int sb_row = board.getStartRow() + height;
-        int sb_col = board.getStartCol();
-        dashboard = Dashboard(width, sb_row, sb_col);
-        board.initialize();
-        score = 0;
+        if (character != nullptr) {
+            delete character;
+            character = nullptr;
+        }
         dashboard.initialize(score);
-        game_over = false;
+        board.initialize();
         srand(time(nullptr));
-        snake.setDirection(down);
+        
+        // Reset snake
+        snake = Snake();
+        snake.setDirection(Direction::right);
 
-        SnakePiece next = SnakePiece(1, 1);
+        // Start with a single piece
+        SnakePiece initialPiece(1, 1);
+        board.add(initialPiece);
+        snake.addPiece(initialPiece);
+
+        createCharacter();
+    }
+
+    void handleNextPiece(SnakePiece next)
+    {
+        if (!board.isWithinBounds(next.getY(), next.getX())) {
+            game_over = true;
+            return;
+        }
+
+        if (character != nullptr && next.getX() == character->getX() && next.getY() == character->getY()) {
+            destroyCharacter();
+        } else if (!snake.getPieces().empty()) {
+            int emptyRow = snake.tail().getY();
+            int emptyCol = snake.tail().getX();
+            board.add(Empty(emptyRow, emptyCol));
+            snake.removePiece();
+        }
+
+        board.add(next);
         snake.addPiece(next);
+    }
 
-        next = snake.nextHead();
-        snake.addPiece(next);
+     void createCharacter() 
+    {
+        int y, x;
+        board.getEmptyCoordinates(y, x);
+        if (board.isWithinBounds(y, x)) {
+            character = new Character(y, x);
+            board.add(*character);
+        }
+    }
 
-        next = snake.nextHead();
-        snake.addPiece(next);
+    void destroyCharacter()
+    {
+        if (character != nullptr) {
+            board.add(Empty(character->getY(), character->getX()));  // Replace character with empty space
+            delete character;
+            character = nullptr;
+        }
+    }
 
-        snake.setDirection(right);
+    void updateState()
+    {
+        if (!game_over) {
+            handleNextPiece(snake.nextHead());
 
-        next = snake.nextHead();
-        snake.addPiece(next);
+            if (character == nullptr) {
+                createCharacter();
+            }
+
+            score += 1;
+            dashboard.updateScore(score);
+        }
     }
 
     void processInput()
@@ -63,59 +114,17 @@ public:
             game_over = true;
         }
         else if (input == 'w' || input == KEY_UP) {
-            snake.setDirection(up);
+            snake.setDirection(Direction::up);
         }
         else if (input == 's' || input == KEY_DOWN) {
-            snake.setDirection(down);
+            snake.setDirection(Direction::down);
         }
         else if (input == 'a' || input == KEY_LEFT) {
-            snake.setDirection(left);
+            snake.setDirection(Direction::left);
         }
         else if (input == 'd' || input == KEY_RIGHT) {
-            snake.setDirection(right);
+            snake.setDirection(Direction::right);
         }
-    }
-
-    void updateState()
-    {
-        int y, x;
-        board.clear();
-
-        // Add character if it doesn't exist
-        if (character == nullptr) {
-            board.getEmptyCoordinates(y, x);
-            character = new Character(y, x);
-        }
-
-        // Add character to the board
-        board.add(*character);
-
-        // Move the snake
-        SnakePiece next = snake.nextHead();
-
-        // Check if snake head is at the character position
-        if (next.getX() == character->getX() && next.getY() == character->getY()) {
-            delete character; // Snake ate the character
-            character = nullptr;
-        } else {
-            // Remove the tail if character is not eaten
-            int emptyRow = snake.tail().getY();
-            int emptyCol = snake.tail().getX();
-            board.add(Empty(emptyRow, emptyCol));
-            snake.removePiece();
-        }
-
-        snake.addPiece(next);
-
-        // Add all snake pieces to the board
-        std::queue<SnakePiece> pieces = snake.getPieces();
-        while (!pieces.empty()) {
-            board.add(pieces.front());
-            pieces.pop();
-        }
-
-        score += 1;
-        dashboard.updateScore(score);
     }
 
     void redraw()
@@ -128,8 +137,4 @@ public:
     {
         return game_over;
     }
-
-private:
-    bool game_over;
-    int score;
 };

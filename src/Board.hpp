@@ -48,6 +48,11 @@ public:
         while ((mvwinch(board_win, y = rand() % height, x = rand() % width)) != ' ');
     }
 
+    chtype getCharAt(int y, int x)
+    {
+        return mvwinch(board_win, y, x);
+    }
+
     void clear()
     {
         wclear(board_win);
@@ -69,7 +74,11 @@ public:
     {
         return start_col;
     }
-
+    
+    bool isWithinBounds(int y, int x) const
+    {
+        return y >= 0 && y < height && x >= 0 && x < width;
+    }
 private:
     WINDOW *board_win;
     int height, width, start_row, start_col;
