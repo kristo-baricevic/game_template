@@ -96,6 +96,9 @@ private:
 
         // Center the board on the screen
         board_win = newwin(height, width, start_row, start_col);
+
+        wtimeout(board_win, 1000);
+
         keypad(board_win, TRUE);
         if (board_win == nullptr) {
             std::cerr << "Error creating new window" << std::endl;

@@ -14,6 +14,7 @@ int main(int argc, char **argv)
     noecho();
     cbreak();
     refresh();
+    curs_set(0);
 
     Game game(BOARD_ROWS, BOARD_COLS);
 

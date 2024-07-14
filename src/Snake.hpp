@@ -39,7 +39,7 @@ public:
         cur_direction = down;
     }
 
-    void addPlace(SnakePiece piece)
+    void addPiece(SnakePiece piece)
     {
         prev_pieces.push(piece);
     }
@@ -90,5 +90,10 @@ public:
             break;
         }
         return SnakePiece(row, col);
+    }
+
+    std::queue<SnakePiece> getPieces() const
+    {
+        return prev_pieces;
     }
 };
