@@ -1,4 +1,5 @@
 #pragma once
+ 
 #include <ncurses.h>
 #include "Board.hpp"
 #include "Drawable.hpp"
@@ -74,7 +75,7 @@ public:
         snake.addPiece(next);
     }
 
-     void createCharacter() 
+     void createCharacter()
     {
         int y, x;
         board.getEmptyCoordinates(y, x);
@@ -87,7 +88,7 @@ public:
     void destroyCharacter()
     {
         if (character != nullptr) {
-            board.add(Empty(character->getY(), character->getX()));  // Replace character with empty space
+            board.add(Empty(character->getY(), character->getX()));
             delete character;
             character = nullptr;
         }
