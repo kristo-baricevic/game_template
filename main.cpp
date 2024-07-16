@@ -28,20 +28,24 @@ int main(int argc, char **argv)
     player.initLogo(dash);
         player.displayLogo(dash);
 
-    while (true) {
+    auto start = std::chrono::high_resolution_clock::now();
+    auto end = start + std::chrono::seconds(5);
+
+    while (std::chrono::high_resolution_clock::now() < end) {
         player.displayPlayer(game_wnd);
-
         player.nextFrame();
-
-        usleep(500000); // Sleep for 0.5 seconds
+        usleep(500000);
     }
 
-    // while (!game.isOver())
-    // {
-    //     game.processInput();
-    //     game.updateState();
-    //     game.redraw();
-    // }
+
+    Game game(BOARD_ROWS, BOARD_COLS);
+
+    while (!game.isOver())
+    {
+        game.processInput();
+        game.updateState();
+        game.redraw();
+    }
 
     getch();
     endwin();
